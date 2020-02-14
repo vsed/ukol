@@ -387,7 +387,7 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('appVMNamePrefix'), variables('nicNamePrefix'), copyindex())]"
+                "[concat('Microsoft.Network/networkInterfaces/', 'db-nic')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -483,6 +483,25 @@
                 "settings": {
                     "fileUris": "[variables('haproxyVMScripts').fileUris]",
                     "commandToExecute": "[variables('haproxyVMScripts').commandToExecute]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "db-conf",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', 'db')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": "[concat(variables('scriptsBaseUrl'), 'db-conf.sh')]",
+                    "commandToExecute": "sudo bash db-conf.sh"
                 }
             }
         }

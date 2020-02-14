@@ -6,7 +6,7 @@ apt -y install php > /var/log/mujlog
 rm /var/www/html/index.html
 
 echo '<?php
-$output = shell_exec('/usr/lib/cgi-bin/hostname.sh');
+$output = shell_exec("/usr/lib/cgi-bin/hostname.sh");
 echo "<pre>$output</pre>";
 ?>
 ' > /var/www/html/index.php
@@ -15,3 +15,5 @@ echo '#!/bin/bash
 echo $(hostname)
 ' > /usr/lib/cgi-bin/hostname.sh
 chmod +x /usr/lib/cgi-bin/hostname.sh
+
+systemctl restart apache2
