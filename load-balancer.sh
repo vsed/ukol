@@ -12,8 +12,6 @@ backend nodes
     mode http
     balance roundrobin
     option forwardfor
-    http-request set-header X-Forwarded-Port %[dst_port]
-    http-request add-header X-Forwarded-Proto https if { ssl_fc }
     option httpchk HEAD / HTTP/1.1\r\nHost:localhost
     server web01 10.0.0.1:80 check
     server web02 10.0.0.2:80 check
