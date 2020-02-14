@@ -1,3 +1,27 @@
 #!/bin/sh
 apt update > /var/log/mujlog
 apt -y install haproxy > /var/log/mujlog
+
+echo '
+frontend localnodes
+    bind *:80
+    mode http
+    default_backend nodes
+
+backend nodes
+    mode http
+    balance roundrobin
+    option forwardfor
+    http-request set-header X-Forwarded-Port %[dst_port]
+    http-request add-header X-Forwarded-Proto https if { ssl_fc }
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+    server web01 10.0.0.1:80 check
+    server web01 10.0.0.2:80 check
+    server web01 10.0.0.3:80 check
+    server web01 10.0.0.4:80 check
+    server web01 10.0.0.5:80 check
+    server web01 10.0.0.6:80 check
+    server web01 10.0.0.7:80 check
+    ' >> /etc/haproxy/haproxy.cfg
+    systemctl restart haproxy
+    
