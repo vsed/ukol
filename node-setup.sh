@@ -3,6 +3,8 @@ apt update > /var/log/mujlog
 apt -y install apache2 > /var/log/mujlog
 apt -y install php > /var/log/mujlog
 
+rm /var/www/html/index.html
+
 echo '<?php
 $output = shell_exec('/usr/lib/cgi-bin/hostname.sh');
 echo "<pre>$output</pre>";
