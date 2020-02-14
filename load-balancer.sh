@@ -22,6 +22,8 @@ backend nodes
     server web01 10.0.0.5:80 check
     server web01 10.0.0.6:80 check
     server web01 10.0.0.7:80 check
+    server web01 10.0.0.8:80 check
+    server web01 10.0.0.9:80 check
+    server web01 10.0.0.10:80 check
     ' >> /etc/haproxy/haproxy.cfg
     systemctl restart haproxy
-    
