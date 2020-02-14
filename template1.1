@@ -68,6 +68,12 @@
             ],
             "commandToExecute": "sudo bash node-setup.sh"
         },
+        "dbscripts": {
+            "fileUris": [
+                "[concat(variables('scriptsBaseUrl'), 'db-conf.sh')]"
+            ],
+            "commandToExecute": "sudo bash db-conf.sh"
+        },
         "appVMPort": 80,
         "imagePublisher": "Debian",
         "imageOffer": "debian-10",
@@ -500,8 +506,8 @@
                 "typeHandlerVersion": "2.0",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "fileUris": ["[concat(variables('scriptsBaseUrl'), 'db-conf.sh')]"],
-                    "commandToExecute": "sudo bash db-conf.sh"
+                    "fileUris": "[variables('dbscripts').fileUris]",
+                    "commandToExecute": "[variables('dbscripts').commandToExecute]"
                 }
             }
         }
