@@ -24,6 +24,6 @@ backend nodes
     server web07 10.0.0.7:80 check
     server web08 10.0.0.8:80 check
     server web09 10.0.0.9:80 check
-    server web010 10.0.0.10:80 check
+    server web10 10.0.0.10:80 check
     ' >> /etc/haproxy/haproxy.cfg
     systemctl restart haproxy
