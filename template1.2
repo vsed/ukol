@@ -426,7 +426,8 @@
             },
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('appVMNamePrefix'), copyindex())]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('appVMNamePrefix'), copyindex())]",
+                "db-conf"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",

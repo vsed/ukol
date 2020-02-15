@@ -1,6 +1,6 @@
 #!/bin/sh
 apt update >> /var/log/mujlog
-apt -y install apache2 php mariadb-client >> /var/log/mujlog
+apt -y install apache2 php php-mysql mariadb-client nmap >> /var/log/mujlog
 
 rm /var/www/html/index.html
 
@@ -18,7 +18,7 @@ mysql -ucounter -pcounter -h $db -e "ALTER TABLE counter ADD $(hostname) int" -D
 echo '<?php
 $output = shell_exec("/usr/lib/cgi-bin/hostname.sh");
 echo "<pre>$output</pre>";' > /var/www/html/index.php
-echo \$servername = "$(localhost)"\; >> /var/www/html/index.php
+echo \$servername = \""$db"\"\; >> /var/www/html/index.php
 echo '$username = "counter";
 $password = "counter";
 
@@ -37,7 +37,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "id: " . $row["id"]. " - Value: " . $row "<br>";
+        echo "id: " . $row["id"]. " - Value: ";
     }
 } else {
     echo "0 results";
