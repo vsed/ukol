@@ -1,6 +1,6 @@
 #!/bin/sh
-apt update > /var/log/mujlog
-apt -y install haproxy > /var/log/mujlog
+apt update >> /var/log/mujlog
+apt -y install haproxy >> /var/log/mujlog
 
 echo '
 frontend localnodes
@@ -12,16 +12,14 @@ backend nodes
     mode http
     balance roundrobin
     option forwardfor
-    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
-    server web01 10.0.0.1:80 check
-    server web02 10.0.0.2:80 check
-    server web03 10.0.0.3:80 check
-    server web04 10.0.0.4:80 check
-    server web05 10.0.0.5:80 check
-    server web06 10.0.0.6:80 check
-    server web07 10.0.0.7:80 check
-    server web08 10.0.0.8:80 check
-    server web09 10.0.0.9:80 check
-    server web10 10.0.0.10:80 check
-    ' >> /etc/haproxy/haproxy.cfg
-    systemctl restart haproxy
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost' >> /etc/haproxy/haproxy.cfg
+
+
+for i in $(nmap -sn 10.0.0.0/24|grep appvm| grep -o -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
+do
+c=1
+echo server srv$c $i:80 check >> /etc/haproxy/haproxy.cfg
+c=c+1
+done
+
+systemctl restart haproxy
