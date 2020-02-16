@@ -18,7 +18,7 @@ backend nodes
 c=1
 for i in $(nmap -sn 10.0.0.0/24|grep appvm| grep -o -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
 do
-echo '    server' srv$c $i:80
+echo '    server' srv$c $i:80 >> /etc/haproxy/haproxy.cfg
 c=$((c+1))
 done
 
