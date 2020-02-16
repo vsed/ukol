@@ -13,11 +13,11 @@ systemctl restart apache2
 
 db=$(nmap -sn 10.0.0.0/24|grep dbvm| grep -o -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
 
-mysql -ucounter -pcounter -Dcounter -h $db -e "INSERT INTO counter(hostname, count) VALUES (\'$(hostname)\', 0)" >> /var/log/mujlog
+mysql -ucounter -pcounter -Dcounter -h $db -e "INSERT INTO counter(hostname, count) VALUES ('$(hostname)', 0)" >> /var/log/mujlog
 
 echo '<?php
-$output = shell_exec("/usr/lib/cgi-bin/hostname.sh");
-echo "<pre>$output</pre>";' > /var/www/html/index.php
+$hostname = shell_exec("/usr/lib/cgi-bin/hostname.sh");
+echo "<pre>$hostname</pre>";' > /var/www/html/index.php
 echo \$servername = \""$db"\"\; >> /var/www/html/index.php
 echo '$username = "counter";
 $password = "counter";
@@ -49,7 +49,7 @@ $rres = $conn->query($sqlr);
 $data = $rres->fetch_assoc();
 $cnt = $data['count'];
 echo $cnt;
-$cnt += 1;
+$cnt +=1;
 $sqlc = "UPDATE counter SET count=$cnt WHERE hostname='$hostname'";
 
 if ($conn->query($sqlc) === TRUE) {
