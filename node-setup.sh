@@ -11,7 +11,7 @@ chmod +x /usr/lib/cgi-bin/hostname.sh
 
 systemctl restart apache2
 
-db=$(nmap -sn 10.0.0.0/24|grep dbvm| grep -o -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
+db=$(nmap 10.0.0.0/24 --version-all -p3306 --exclude $(hostname -I) --max-rate 100 -oG -|grep open|grep -o -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
 
 mysql -ucounter -pcounter -Dcounter -h $db -e "INSERT INTO counter(hostname, count) VALUES ('$(hostname)', 0)" >> /var/log/mujlog
 
