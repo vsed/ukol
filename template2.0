@@ -11,22 +11,29 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "Bobek123456789",
+            "defaultValue": "Homer123456789",
             "metadata": {
                 "description": "Default Admin password"
+            }
+        },
+        "serversno": {
+            "type": "int",
+            "defaultValue": "2",
+            "metadata": {
+                "description": "Pocet web serveru"   
             }
         },
         "lbDNSLabelPrefix": {
             "type": "string",
             "metadata": {
-                "description": "DNS Label for the load balancer Public IP. Must be lowercase. It should match with the regex: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$."
+                "description": "DNS LoadBalanceru"
             }
         },
         "haproxyVMNamePrefix": {
             "type": "string",
             "defaultValue": "haproxyvm-",
             "metadata": {
-                "description": "Prefix to use for names of VMs under the load balancer"
+                "description": "Prefix LoadBalanceru"
             }
         },
         "appVMNamePrefix": {
@@ -54,15 +61,13 @@
     "variables": {
         "scriptsBaseUrl": "https://raw.githubusercontent.com/vsed/ukol/master/",
         "storageAccountName": "[concat(uniqueString(resourceGroup().id), 'haproxysa')]",
-        "numberOfHAproxyInstances": 1,
-        "masterHAproxyInstanceIndex": 0,
         "haproxyVMScripts": {
             "fileUris": [
                 "[concat(variables('scriptsBaseUrl'), 'load-balancer.sh')]"
             ],
             "commandToExecute": "sudo bash load-balancer.sh"
         },
-        "numberOfAppInstances": 2,
+        "numberOfAppInstances": "[parameters('serversno')]",
         "appVMScripts": {
             "fileUris": [
                 "[concat(variables('scriptsBaseUrl'), 'node-setup.sh')]"
@@ -75,14 +80,10 @@
             ],
             "commandToExecute": "sudo bash db-conf.sh"
         },
-        "appVMPort": 80,
         "imagePublisher": "Debian",
         "imageOffer": "debian-10",
-        "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
         "nicNamePrefix": "nic-",
         "storageAccountType": "Standard_LRS",
-        "haproxyAvailabilitySetName": "haproxyAvSet",
-        "appAvailabilitySetName": "appAvSet",
         "vnetName": "haproxyVNet",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet-1",
@@ -90,13 +91,8 @@
         "subnetPrefix": "10.0.0.0/24",
         "lbName": "haproxyLB",
         "lbPublicIPAddressType": "Static",
-        "lbPublicIPAddressName": "[concat(variables('lbName'), '-publicip')]",
-        "lbVIPPort": 80,
-        "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
-        "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
-        "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-        "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
-    },
+        "lbPublicIPAddressName": "[concat(variables('lbName'), '-publicip')]"
+            },
     "resources": [
         {
             "apiVersion": "2015-06-15",
@@ -188,10 +184,6 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'), copyindex())]",
             "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "haproxyNicLoop",
-                "count": "[variables('numberOfHAproxyInstances')]"
-            },
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('lbPublicIPAddressName'))]"
@@ -217,10 +209,6 @@
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('haproxyVMNamePrefix'), copyindex())]",
-            "copy": {
-                "name": "haproxyVMLoop",
-                "count": "[variables('numberOfHAproxyInstances')]"
-            },
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
@@ -444,10 +432,6 @@
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('haproxyVMNamePrefix'), copyindex(), '/configureHAproxyVM')]",
-            "copy": {
-                "name": "haproxyVMExtensionsLoop",
-                "count": "[variables('numberOfHAproxyInstances')]"
-            },
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMNamePrefix'), copyindex())]",
