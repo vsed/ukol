@@ -4,7 +4,7 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
-            "defaultValue": "frantavomacka",
+            "defaultValue": "bob",
             "metadata": {
                 "description": "Admin username"
             }
@@ -40,7 +40,7 @@
             "type": "string",
             "defaultValue": "appvm-",
             "metadata": {
-                "description": "Prefix to use for names of application VMs"
+                "description": "Prefix pro webserver VMs."
             }
         },
         "deb_version": {
