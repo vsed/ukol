@@ -44,12 +44,12 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 
-$sqlr = "SELECT count FROM counter WHERE hostname="$hostname";
+$sqlr = "SELECT count FROM counter WHERE hostname=$hostname";
 $rres = $conn->query($sqlr); 
 $data = $rres->fetch_assoc();
 $cnt = $data['"'count'"'];
 $cnt +=1;
-$sqlc = "UPDATE counter SET count=$cnt WHERE hostname="$hostname";
+$sqlc = "UPDATE counter SET count=$cnt WHERE hostname=$hostname";
 
 if ($conn->query($sqlc) === TRUE) {
     echo "<br>";
