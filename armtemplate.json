@@ -18,7 +18,7 @@
         },
         "serversno": {
             "type": "int",
-            "defaultValue": "2",
+            "defaultValue": 2,
             "metadata": {
                 "description": "Pocet web serveru"   
             }
@@ -31,9 +31,9 @@
         },
         "haproxyVMNamePrefix": {
             "type": "string",
-            "defaultValue": "haproxyvm-",
+            "defaultValue": "haproxyvm",
             "metadata": {
-                "description": "Prefix LoadBalanceru"
+                "description": "Nazev LoadBalanceru"
             }
         },
         "appVMNamePrefix": {
@@ -82,7 +82,7 @@
         },
         "imagePublisher": "Debian",
         "imageOffer": "debian-10",
-        "nicNamePrefix": "nic-",
+        "nicNamePrefix": "nic_",
         "storageAccountType": "Standard_LRS",
         "vnetName": "haproxyVNet",
         "addressPrefix": "10.0.0.0/16",
@@ -182,7 +182,7 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'), copyindex())]",
+            "name": "[concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
@@ -208,18 +208,18 @@
         {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('haproxyVMNamePrefix'), copyindex())]",
+            "name": "[parameters('haproxyVMNamePrefix')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'), copyindex())]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'))]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('haproxyVMNamePrefix'), copyIndex())]",
+                    "computerName": "[parameters('haproxyVMNamePrefix')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -231,7 +231,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('haproxyVMNamePrefix'), 'OSDisk-', copyindex())]",
+                        "name": "[concat(parameters('haproxyVMNamePrefix'), 'OSDisk' )]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -242,7 +242,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'),copyindex()))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix')))]"
                         }    
                     ]
                 },
@@ -431,10 +431,10 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('haproxyVMNamePrefix'), copyindex(), '/configureHAproxyVM')]",
+            "name": "[concat(parameters('haproxyVMNamePrefix'), '/configureHAproxyVM')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMNamePrefix'), copyindex())]",
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMNamePrefix'))]",
                 "appVMExtensionsLoop"
             ],
             "properties": {
@@ -471,7 +471,7 @@
     "outputs": {
         "resourceID": {
             "type": "string",
-            "value": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPublicIPAddressName'))]"
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('lbPublicIPAddressName'))).IpAddress]"
         }
     }
 }
