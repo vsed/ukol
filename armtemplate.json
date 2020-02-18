@@ -29,7 +29,7 @@
                 "description": "DNS LoadBalanceru"
             }
         },
-        "haproxyVMNamePrefix": {
+        "haproxyVMName": {
             "type": "string",
             "defaultValue": "haproxyvm",
             "metadata": {
@@ -182,7 +182,7 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'))]",
+            "name": "[concat(parameters('haproxyVMName'), variables('nicNamePrefix'))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
@@ -208,18 +208,18 @@
         {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('haproxyVMNamePrefix')]",
+            "name": "[parameters('haproxyVMName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('haproxyVMNamePrefix'), variables('nicNamePrefix'))]"
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('haproxyVMName'), variables('nicNamePrefix'))]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('haproxyVMNamePrefix')]",
+                    "computerName": "[parameters('haproxyVMName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -231,7 +231,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('haproxyVMNamePrefix'), 'OSDisk' )]",
+                        "name": "[concat(parameters('haproxyVMName'), 'OSDisk' )]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -242,7 +242,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('haproxyVMNamePrefix'), variables('nicNamePrefix')))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('haproxyVMName'), variables('nicNamePrefix')))]"
                         }    
                     ]
                 },
@@ -431,10 +431,10 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('haproxyVMNamePrefix'), '/configureHAproxyVM')]",
+            "name": "[concat(parameters('haproxyVMName'), '/configureHAproxyVM')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMNamePrefix'))]",
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMName'))]",
                 "appVMExtensionsLoop"
             ],
             "properties": {
