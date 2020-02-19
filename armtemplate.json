@@ -16,11 +16,19 @@
                 "description": "Default Admin password"
             }
         },
+        "PristupIP": {
+            "type": "string",
+            "defaultValue": "90.183.171.170",
+            "metadata": {
+                "description": "IP nebo rozsah ip, odkud bude umoznen pristup. * - bez omezeni"
+            }
+
+        },
         "serversno": {
             "type": "int",
             "defaultValue": 2,
             "metadata": {
-                "description": "Pocet web serveru"   
+                "description": "Pocet web serveru"
             }
         },
         "lbDNSLabelPrefix": {
@@ -92,7 +100,7 @@
         "lbName": "haproxyLB",
         "lbPublicIPAddressType": "Static",
         "lbPublicIPAddressName": "[concat(variables('lbName'), '-publicip')]"
-            },
+    },
     "resources": [
         {
             "apiVersion": "2015-06-15",
@@ -144,7 +152,7 @@
                             "direction": "Inbound",
                             "destinationPortRange": "80",
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "*",
+                            "sourceAddressPrefix": "[parameters('PristupIP')]",
                             "sourcePortRange": "*",
                             "destinationAddressPrefix": "*"
                         }
@@ -171,9 +179,9 @@
                         "name": "[variables('subnetName')]",
                         "properties": {
                             "addressPrefix": "[variables('subnetPrefix')]",
-                        "networkSecurityGroup": {
-                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'netvork-ruuls')]"
-                        }
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'netvork-ruuls')]"
+                            }
                         }
                     }
                 ]
@@ -243,7 +251,7 @@
                     "networkInterfaces": [
                         {
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('haproxyVMName'), variables('nicNamePrefix')))]"
-                        }    
+                        }
                     ]
                 },
                 "diagnosticsProfile": {
